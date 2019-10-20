@@ -56,5 +56,5 @@ defmodule Entice.Logic.Player do
 
 
   def set_appearance(entity, %Appearance{} = new_appear),
-  do: entity |> Entity.set_attribute(new_appear)
+  do: entity |> Entity.put_attribute(new_appear)
 end
