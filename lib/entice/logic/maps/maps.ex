@@ -24,7 +24,7 @@ defmodule Entice.Logic.Maps do
   defmacro __using__(_) do
     quote do
       alias Entice.Logic.Maps
-      unquote(for map <- get_maps do
+      unquote(for map <- get_maps() do
         quote do: alias unquote(map)
       end)
     end

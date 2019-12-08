@@ -94,7 +94,7 @@ defmodule Entice.Logic.Vitals do
       %Energy{max_mana: max_mana} = get_max_energy(entity.attributes)
       resurrected_mana = round(max_mana / 100 * percent_energy)
 
-      self |> Process.send_after({:vitals_regeneration_update, %{
+      self() |> Process.send_after({:vitals_regeneration_update, %{
           interval: @regeneration_interval,
           health_accumulator: 0,
           energy_accumulator: 0}}, @regeneration_interval)
@@ -105,7 +105,7 @@ defmodule Entice.Logic.Vitals do
     end
 
     def init(entity, _args) do
-      self |> Process.send_after({:vitals_regeneration_update, %{
+      self() |> Process.send_after({:vitals_regeneration_update, %{
           interval: @regeneration_interval,
           health_accumulator: 0,
           energy_accumulator: 0}}, @regeneration_interval)
@@ -162,7 +162,7 @@ defmodule Entice.Logic.Vitals do
       {new_health, new_health_acc} = regenerate_health(health, health_acc)
       {new_energy, new_energy_acc} = regenerate_energy(energy, energy_acc)
 
-      self |> Process.send_after({:vitals_regeneration_update, %{
+      self() |> Process.send_after({:vitals_regeneration_update, %{
           interval: @regeneration_interval,
           health_accumulator: new_health_acc,
           energy_accumulator: new_energy_acc}}, @regeneration_interval)
