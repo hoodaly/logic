@@ -138,7 +138,7 @@ defmodule Entice.Logic.Vitals do
         %Entity{attributes: %{Health => %Health{health: health, max_health: max_health}}} = entity) do
 
       new_health = health + amount
-      if new_health > max_health, do: new_health = max_health
+      new_health = if new_health > max_health, do: max_health, else: new_health
 
       {:ok, entity |> update_attribute(Health, fn health -> %Health{health | health: new_health} end)}
     end
@@ -242,8 +242,8 @@ defmodule Entice.Logic.Vitals do
         %{entity_id: entity.id, attributes: entity.attributes}})
 
       new_morale = morale - 15
-      if new_morale < -60, #-60 is max negative morale
-      do: new_morale = -60
+      new_morale = if new_morale < -60, #-60 is max negative morale
+      do: -60, else: new_morale
 
       {:ok,
         entity
