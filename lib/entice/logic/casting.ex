@@ -77,7 +77,7 @@ defmodule Entice.Logic.Casting do
     end
 
 
-    def handle_call(event, entity), do: super(event, entity)
+    #def handle_call(event, entity), do: super(event, entity)
 
 
     @doc "This event triggers when the cast ends, it resets the casting timer, calls the skill's callback, and triggers recharge_end after a while."
