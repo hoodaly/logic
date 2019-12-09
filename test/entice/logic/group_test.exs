@@ -16,22 +16,22 @@ defmodule Entice.Logic.GroupTest do
 
     Attribute.register(e1)
     Group.register(e1)
-    Spy.register(e1, self)
+    Spy.register(e1, self())
 
     Attribute.register(e2)
     Group.register(e2)
-    Spy.register(e2, self)
+    Spy.register(e2, self())
 
     Attribute.register(e3)
     Group.register(e3)
     Group.new_leader(e3, e1)
-    Spy.register(e3, self)
+    Spy.register(e3, self())
     assert_receive %{sender: ^e1, event: {:group_assign, ^e3}}
 
     Attribute.register(e4)
     Group.register(e4)
     Group.new_leader(e4, e2)
-    Spy.register(e4, self)
+    Spy.register(e4, self())
     assert_receive %{sender: ^e2, event: {:group_assign, ^e4}}
 
     {:ok, [e1: e1, e2: e2, e3: e3, e4: e4]}

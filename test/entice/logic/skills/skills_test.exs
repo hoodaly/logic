@@ -62,7 +62,7 @@ defmodule Entice.Logic.SkillsTest do
   end
 
   test "skill after-cast-time effects" do
-    SomeOtherSkill.apply_effect(self, self)
+    SomeOtherSkill.apply_effect(self, self())
     assert_receive :gotcha
   end
 

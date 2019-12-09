@@ -5,7 +5,7 @@ defmodule Entice.Logic.Mixfile do
     [app: :entice_logic,
      version: "0.0.1",
      elixir: "~> 1.2",
-     deps: deps]
+     deps: deps()]
   end
 
   def application do

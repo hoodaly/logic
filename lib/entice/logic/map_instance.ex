@@ -36,7 +36,7 @@ defmodule Entice.Logic.MapInstance do
     alias Entice.Logic.Player.Appearance
 
     def init(entity, map) do
-      Coordination.register_observer(self, map) # TODO change map to something else if we have multiple instances
+      Coordination.register_observer(self(), map) # TODO change map to something else if we have multiple instances
       {:ok, entity |> put_attribute(%MapInstance{map: map})}
     end
 
