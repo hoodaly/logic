@@ -47,7 +47,10 @@ defmodule Entice.Logic.SkillBar do
   def change_skill(entity, slot, skill) when not is_nil(skill) and is_atom(skill) do
     new_skillbar = Entity.get_and_update_attribute(entity, SkillBar,
       fn skillbar ->
-        %SkillBar{slots: skillbar.slots |> List.replace_at(slot, skill)}
+        %SkillBar{slots: case Enum.find_index(skillbar.slots, fn x -> x == skill end) do
+          current_idx when not is_nil(current_idx) -> skillbar.slots |> List.replace_at(current_idx, Skills.NoSkill)
+          _                                        -> skillbar.slots
+        end |> List.replace_at(slot, skill)}
       end)
     to_skill_ids(new_skillbar)
   end

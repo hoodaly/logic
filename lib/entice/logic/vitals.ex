@@ -94,7 +94,7 @@ defmodule Entice.Logic.Vitals do
       %Energy{max_mana: max_mana} = get_max_energy(entity.attributes)
       resurrected_mana = round(max_mana / 100 * percent_energy)
 
-      self |> Process.send_after({:vitals_regeneration_update, %{
+      self() |> Process.send_after({:vitals_regeneration_update, %{
           interval: @regeneration_interval,
           health_accumulator: 0,
           energy_accumulator: 0}}, @regeneration_interval)
@@ -105,7 +105,7 @@ defmodule Entice.Logic.Vitals do
     end
 
     def init(entity, _args) do
-      self |> Process.send_after({:vitals_regeneration_update, %{
+      self() |> Process.send_after({:vitals_regeneration_update, %{
           interval: @regeneration_interval,
           health_accumulator: 0,
           energy_accumulator: 0}}, @regeneration_interval)
@@ -138,7 +138,7 @@ defmodule Entice.Logic.Vitals do
         %Entity{attributes: %{Health => %Health{health: health, max_health: max_health}}} = entity) do
 
       new_health = health + amount
-      if new_health > max_health, do: new_health = max_health
+      new_health = if new_health > max_health, do: max_health, else: new_health
 
       {:ok, entity |> update_attribute(Health, fn health -> %Health{health | health: new_health} end)}
     end
@@ -162,7 +162,7 @@ defmodule Entice.Logic.Vitals do
       {new_health, new_health_acc} = regenerate_health(health, health_acc)
       {new_energy, new_energy_acc} = regenerate_energy(energy, energy_acc)
 
-      self |> Process.send_after({:vitals_regeneration_update, %{
+      self() |> Process.send_after({:vitals_regeneration_update, %{
           interval: @regeneration_interval,
           health_accumulator: new_health_acc,
           energy_accumulator: new_energy_acc}}, @regeneration_interval)
@@ -242,8 +242,8 @@ defmodule Entice.Logic.Vitals do
         %{entity_id: entity.id, attributes: entity.attributes}})
 
       new_morale = morale - 15
-      if new_morale < -60, #-60 is max negative morale
-      do: new_morale = -60
+      new_morale = if new_morale < -60, #-60 is max negative morale
+      do: -60, else: new_morale
 
       {:ok,
         entity

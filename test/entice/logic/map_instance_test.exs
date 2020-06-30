@@ -41,7 +41,7 @@ defmodule Entice.Logic.MapInstanceTest do
 
     {:ok, e1, _pid} = Entity.start
     Coordination.register(e1, TestMap2)
-    Spy.register(e1, self)
+    Spy.register(e1, self())
 
     MapInstance.add_player(entity_id, player_id)
 
@@ -54,7 +54,7 @@ defmodule Entice.Logic.MapInstanceTest do
     MapInstance.register(entity_id, TestMap3)
     {:ok, e1, _pid} = Entity.start
     Coordination.register(e1, TestMap3)
-    Spy.register(e1, self)
+    Spy.register(e1, self())
 
     MapInstance.add_npc(entity_id, "Gwen", :gwen, %Position{})
 
@@ -69,7 +69,7 @@ defmodule Entice.Logic.MapInstanceTest do
     {:ok, player_id_2, _pid} = Entity.start
     Player.register(player_id_2, TestMap4)
 
-    Spy.register(entity_id, self)
+    Spy.register(entity_id, self())
 
     MapInstance.add_player(entity_id, player_id_1)
     MapInstance.add_player(entity_id, player_id_2)
