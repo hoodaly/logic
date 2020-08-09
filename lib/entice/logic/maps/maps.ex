@@ -8,7 +8,7 @@ defmodule Entice.Logic.Maps do
   defmap Lobby
 
   # Outposts...
-  defmap HeroesAscent, spawn: %Vector2D{x: 2017, y: -3241}, nav_mesh: Serializer.deserialize(%NavMesh{}, "data/heroes_ascent.map"), outpost: true
+  defmap HeroesAscent, spawn: %Vector2D{x: 2017, y: -3241}, nav_mesh: Serializer.deserialize(%NavMesh{}, "../entice_web/data/heroes_ascent.map"), outpost: true
   defmap RandomArenas, spawn: %Vector2D{x: 3854, y: 3874}
   defmap TeamArenas,   spawn: %Vector2D{x: -1873, y: 352}
 
