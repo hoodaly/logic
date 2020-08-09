@@ -20,6 +20,7 @@ defmodule Entice.Logic.MapRegistry do
         :error ->
           with {:ok, entity_id, _pid} <- Entity.start,
                :ok                    <- MapInstance.register(entity_id, map),
+               :ok                    <- MapInstance.load_content(entity_id),
                new_state              =  Map.put(state, map, entity_id),
                do: {entity_id, new_state}
       end

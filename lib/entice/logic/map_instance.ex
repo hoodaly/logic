@@ -23,12 +23,27 @@ defmodule Entice.Logic.MapInstance do
   end
 
 
+  def load_content(entity) do
+    %MapInstance{map: map} = Entity.get_attribute(entity, MapInstance)
+    :ok = MapInstance.add_npc(entity, "Dhuum", :dhuum, %Position{coord: map.spawn})
+  end
+
+
   def add_player(entity, player_entity),
   do: Coordination.notify(entity, {:map_instance_player_add, player_entity})
 
 
   def add_npc(entity, name, model, %Position{} = position) when is_binary(name) and is_atom(model),
   do: Coordination.notify(entity, {:map_instance_npc_add, %{name: name, model: model, position: position}})
+
+  def get_players(entity) do
+    {:ok, %MapInstance{players: players}} = Entity.fetch_attribute(entity, MapInstance)
+    players
+  end
+
+  def get_seeker(entity) do
+    get_players(entity) |> Enum.filter(fn x -> Entity.has_attribute?(Entice.Logic.Seek) end)
+  end
 
 
   defmodule Behaviour do
