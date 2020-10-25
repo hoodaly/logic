@@ -8,12 +8,12 @@ defmodule Entice.Logic.MapInstance do
   alias Entice.Logic.MapRegistry
 
 
-  defstruct(players: 0, map: nil)
+  defstruct(players: 0, map: nil, instance: nil)
 
 
-  def register(entity, map) do
+  def register(entity, map, instance) do
     Suicide.unregister(entity) # maps will kill themselfes on their own
-    Entity.put_behaviour(entity, MapInstance.Behaviour, map)
+    Entity.put_behaviour(entity, MapInstance.Behaviour, %{map: map, instance: instance})
   end
 
 
@@ -50,16 +50,16 @@ defmodule Entice.Logic.MapInstance do
     use Entice.Entity.Behaviour
     alias Entice.Logic.Player.Appearance
 
-    def init(entity, map) do
-      Coordination.register_observer(self(), map) # TODO change map to something else if we have multiple instances
-      {:ok, entity |> put_attribute(%MapInstance{map: map})}
+    def init(%Entity{} = entity, %{map: map, instance: instance} = minst) do
+      Coordination.register_observer(self(), entity)
+      {:ok, entity |> put_attribute(%MapInstance{map: map, instance: instance})}
     end
 
 
     def handle_event(
         {:map_instance_player_add, player_entity},
         %Entity{attributes: %{MapInstance => %MapInstance{map: map, players: players}}} = entity) do
-      Coordination.register(player_entity, map) # TODO change map to something else if we have multiple instances
+      Coordination.register(player_entity, entity)
       {:ok, entity |> update_attribute(MapInstance, fn(m) -> %MapInstance{m | players: players+1} end)}
     end
 
@@ -67,7 +67,7 @@ defmodule Entice.Logic.MapInstance do
         {:map_instance_npc_add, %{name: name, model: model, position: position}},
         %Entity{attributes: %{MapInstance => %MapInstance{map: map}}} = entity) do
       {:ok, eid, _pid} = Npc.spawn(map, name, model, position, seeks: true)
-      Coordination.register(eid, map) # TODO change map to something else if we have multiple instances
+      Coordination.register(eid, entity)
       {:ok, entity}
     end
 
@@ -85,8 +85,8 @@ defmodule Entice.Logic.MapInstance do
     end
 
 
-    def terminate(_reason, %Entity{attributes: %{MapInstance => %MapInstance{map: map}}} = entity) do
-      MapRegistry.stop_instance(map)
+    def terminate(_reason, %Entity{attributes: %{MapInstance => %MapInstance{} = map_inst}} = entity) do
+      MapRegistry.stop_instance(map_inst)
       {:ok, entity |> remove_attribute(MapInstance)}
     end
   end
