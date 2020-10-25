@@ -4,6 +4,7 @@ defmodule Entice.Logic.MapInstance do
   alias Entice.Entity.Coordination
   alias Entice.Entity.Suicide
   alias Entice.Logic.MapInstance
+  alias Entice.Logic.Item
   alias Entice.Logic.Npc
   alias Entice.Logic.MapRegistry
 
@@ -35,6 +36,12 @@ defmodule Entice.Logic.MapInstance do
 
   def add_npc(entity, name, model, %Position{} = position) when is_binary(name) and is_atom(model),
   do: Coordination.notify(entity, {:map_instance_npc_add, %{name: name, model: model, position: position}})
+
+  def add_item(entity, %Item{} = item, %Position{} = position),
+  do: Coordination.notify(entity, {:map_instance_item_add, %{item: item, position: position}})
+
+  def pickup_item(entity, entity_to_pickup),
+  do: Coordination.notify(entity, {:map_instance_item_pickup, %{item: entity_to_pickup}})
 
   def get_players(entity) do
     {:ok, %MapInstance{players: players}} = Entity.fetch_attribute(entity, MapInstance)
@@ -68,6 +75,21 @@ defmodule Entice.Logic.MapInstance do
         %Entity{attributes: %{MapInstance => %MapInstance{map: map}}} = entity) do
       {:ok, eid, _pid} = Npc.spawn(map, name, model, position, seeks: true)
       Coordination.register(eid, entity)
+      {:ok, entity}
+    end
+
+    def handle_event(
+        {:map_instance_item_add, %{item: %Item{} = item, position: position}},
+        %Entity{attributes: %{MapInstance => %MapInstance{map: map} = map_inst}} = entity) do
+      {:ok, eid, _pid} = Item.spawn(map_inst, item, position)
+      Coordination.register(eid, entity)
+      {:ok, entity}
+    end
+
+    def handle_event(
+        {:map_instance_item_pickup, %{item: item}},
+        %Entity{attributes: %{MapInstance => %MapInstance{map: map} = map_inst}} = entity) do
+      Entity.stop(item)
       {:ok, entity}
     end
 
